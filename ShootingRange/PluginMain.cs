@@ -4,6 +4,7 @@ using Exiled.API.Features;
 
 using ShootingRange.API;
 
+
 using Player = Exiled.Events.Handlers.Player;
 using Server = Exiled.Events.Handlers.Server;
 using Scp049 = Exiled.Events.Handlers.Scp049;
@@ -15,7 +16,7 @@ namespace ShootingRange
         public override string Author => "rayzer";
         public override string Name => "Spectator Shooting Range";
         public override Version Version => new(3, 0, 1);
-        public override Version RequiredExiledVersion => new(5, 2, 1);
+       
         public static PluginMain Singleton { get; private set; }
         public EventHandlers EventHandler { get; private set; }
         public SpectatorRange ActiveRange { get; set; }
@@ -39,10 +40,11 @@ namespace ShootingRange
         }
         public void RegisterEvents()
         {
-            Player.Verified += EventHandler.OnVerified;
-            Player.Died += EventHandler.OnDied;
+
+            Exiled.Events.Handlers.Player.Verified += EventHandler.OnVerified;
+            Exiled.Events.Handlers.Player.Died += EventHandler.OnDied;
             Player.Shooting += EventHandler.OnShooting;
-            Player.DroppingItem += EventHandler.OnDroppingItem;
+          
             Server.RoundStarted += EventHandler.OnRoundStarted;
             Scp049.FinishingRecall += EventHandler.OnFinishingRecall;
         }
@@ -52,7 +54,7 @@ namespace ShootingRange
             Player.Verified -= EventHandler.OnVerified;
             Player.Died -= EventHandler.OnDied;
             Player.Shooting -= EventHandler.OnShooting;
-            Player.DroppingItem -= EventHandler.OnDroppingItem;
+          
             Scp049.FinishingRecall -= EventHandler.OnFinishingRecall;
         }
     }

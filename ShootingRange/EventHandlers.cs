@@ -3,7 +3,6 @@
 using MEC;
 
 using Exiled.API.Features;
-using Exiled.Events.EventArgs;
 using Exiled.API.Features.Items;
 
 using ShootingRange.API;
@@ -25,7 +24,7 @@ namespace ShootingRange
         {
             SpectatorRange range = _plugin.Config.UseRangeLocation ? new SpectatorRange(_plugin.Config.RangeLocation) : new SpectatorRange();
             range.SpawnTargets();
-            range.SpawnBench();
+           
 
             if (_plugin.Config.UsePrimitives)
                 range.SpawnPrimitives();
@@ -34,7 +33,7 @@ namespace ShootingRange
 
             Timing.RunCoroutine(WaitForRespawnCoroutine());
         }
-        public void OnVerified(VerifiedEventArgs ev)
+        public void OnVerified(Exiled.Events.EventArgs.Player.VerifiedEventArgs ev)
         {
             Timing.CallDelayed(10f, () =>
             {
@@ -42,22 +41,22 @@ namespace ShootingRange
                     ev.Player.Broadcast(PluginMain.Singleton.Config.DeathBroadcast);
             });
         }
-        public void OnDied(DiedEventArgs ev) => Timing.RunCoroutine(OnDiedCoroutine(ev.Target));
+        public void OnDied(Exiled.Events.EventArgs.Player.DiedEventArgs ev) => Timing.RunCoroutine(OnDiedCoroutine(ev.Player));
         
-        public void OnShooting(ShootingEventArgs ev)
+        public void OnShooting(Exiled.Events.EventArgs.Player.ShootingEventArgs ev)
         {
-            if (_plugin.ActiveRange.HasPlayer(ev.Shooter))
+            if (_plugin.ActiveRange.HasPlayer(ev.Player))
             {
-                Firearm gun = (Firearm)ev.Shooter.CurrentItem;
+                Firearm gun = (Firearm)ev.Player.CurrentItem;
                 gun.Ammo = gun.MaxAmmo;
             }
         }
-        public void OnDroppingItem(DroppingItemEventArgs ev) => ev.IsAllowed = !_plugin.ActiveRange.HasPlayer(ev.Player);
+        
         public IEnumerator<float> WaitForRespawnCoroutine()
         {
             for (;;)
             {
-                if (Respawn.TimeUntilRespawn < 20)
+                if (Respawn.TimeUntilNextPhase < 20)
                 {
                     foreach (Player plyr in Player.List.Where((plyr) => _plugin.ActiveRange.HasPlayer(plyr)))
                     {
@@ -88,7 +87,7 @@ namespace ShootingRange
             if (plyr.IsDead)
                 plyr.Broadcast(_plugin.Config.DeathBroadcast);
         }
-        public void OnFinishingRecall(FinishingRecallEventArgs ev)
+        public void OnFinishingRecall(Exiled.Events.EventArgs.Scp049.FinishingRecallEventArgs ev)
         {
             ev.IsAllowed |= FreshlyDead.Contains(ev.Target) && _plugin.ActiveRange.HasPlayer(ev.Target);
         }

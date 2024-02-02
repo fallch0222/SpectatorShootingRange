@@ -7,12 +7,16 @@ using UnityEngine;
 
 using PlayerBroadcast = Exiled.API.Features.Broadcast;
 
+
 namespace ShootingRange
 {
-    public class Config : IConfig
+    public sealed class Config : IConfig
     {
         [Description("Indicates if the plugin is enabled or not.")]
         public bool IsEnabled { get; set; } = true;
+
+        public bool Debug { get; set; }
+
         [Description("Determines whether spectators will automatically be teleported to the shooting range upon death")]
         public bool ForceSpectators { get; set; } = true;
         [Description("Determines if primitives will be used to prevent players from going outside the bounds of the range")]
